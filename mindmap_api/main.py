@@ -53,15 +53,6 @@ def add_mind_map():
         return map_name, 201
     return {"error": "Request must be JSON"}, 415
 
-class MindMapApiError(Exception):
-    def __init__(self, message, mind_map_id):
-        self.message = message
-        self._mind_map_id = mind_map_id
-        super().__init__(self.message)
-        
-    def __str__(self):
-        return "Error occurred with mindmap: " + self._mind_map_id
-
 with app.app_context():
     # TODO: add ability to NOT create tables
     db.create_all()

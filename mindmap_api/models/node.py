@@ -8,7 +8,7 @@ class Node(db.Model):
     parent_node_id = db.Column( db.ForeignKey('node.id'), nullable=True)
     parent_node = db.relationship('Node', lazy="select", remote_side=[id])
 
-    def return_node_from_path(self, path_list, is_root_node=False):
+    def return_node_from_path(self, path_list):
         # If the path is empty, this node is the correct one
         if len(path_list) == 0 or path_list[0] == '':
             return self
