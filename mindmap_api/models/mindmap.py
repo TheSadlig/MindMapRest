@@ -30,4 +30,10 @@ class MindMap(db.Model):
             else:
                 parent_node = self.root_node.return_node_from_path(path_list)
                 new_node.parent_node = parent_node
-        db.session.commit()        
+        db.session.commit()    
+
+    def pretty_print(self) -> str:
+        if self.root_node is None:
+            return ''
+        else:
+            return self.root_node.pretty_print(0)

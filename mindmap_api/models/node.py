@@ -13,12 +13,31 @@ class Node(db.Model):
             return self
         else:
             searched_node = path_list[0]
-            child_node = Node.query.filter(Node.parent_node_id == self.id, Node.node_name == searched_node).first()
 
+            child_node = self.get_child_by_name(searched_node)
             if child_node is None:
                 raise NodeError('Could not find child node with name ' + searched_node, self)
             path_list.pop(0)
             return child_node.return_node_from_path(path_list)
+
+    def get_child_by_name(self, name):
+        node = Node.query.filter(Node.parent_node_id == self.id, Node.node_name == name).first()
+        return node
+
+    def get_all_children(self):
+        children = Node.query.filter(Node.parent_node_id == self.id).all()
+        return children
+
+    def pretty_print(self, indentation_level):
+        children = self.get_all_children()
+        indentation_str = ' ' * indentation_level * 4
+        if len(children) == 0:
+            print(indentation_str + self.node_name)
+        else:
+            print(indentation_str + self.node_name + "/")
+        for child in children:
+            child.pretty_print(indentation_level + 1)
+
 
 class NodeError(Exception):
     def __init__(self, message, node):
