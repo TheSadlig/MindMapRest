@@ -1,4 +1,5 @@
 from models.db import db
+import json
 
 class Node(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,7 +16,7 @@ class Node(db.Model):
             searched_node = path_list[0]
 
             child_node = self.get_child_by_name(searched_node)
-            if child_node is None:
+            if child_node == None:
                 raise NodeError('Could not find child node with name ' + searched_node, self)
             path_list.pop(0)
             return child_node.return_node_from_path(path_list)
@@ -35,8 +36,29 @@ class Node(db.Model):
             print(indentation_str + self.node_name)
         else:
             print(indentation_str + self.node_name + "/")
+
         for child in children:
             child.pretty_print(indentation_level + 1)
+
+    def get_path(self):
+        parent_node = self.parent_node
+        # Writing the path from right to left
+        path = self.node_name
+        
+        while parent_node != None and parent_node.parent_node != None:
+            path = parent_node.node_name + '/' + path
+            parent_node = parent_node.parent_node
+        return path
+
+    def get_json(self):
+        data = {}
+        data['path'] = self.get_path()
+        
+        children = self.get_all_children()
+        data['text'] = []
+        for child in children:
+            data['text'].append(child.node_name) 
+        return json.dumps(data)
 
 
 class NodeError(Exception):

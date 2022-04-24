@@ -17,9 +17,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 @app.post("/map/<map_name>/node")
-def add_leaf(map_name):
+def add_node(map_name):
     map = MindMap.query.filter(MindMap.map_name == map_name).first()
-    if map is None:
+    if map == None:
         raise MindMapApiError("MindMap does not exist", map_name)
     
     raw_json = request.get_json()
@@ -29,10 +29,23 @@ def add_leaf(map_name):
 
     return "OK.", 201 
 
+@app.get("/map/<map_name>/node/<path:node_path>")
+def get_node(map_name, node_path):
+    print(str(node_path))
+    map = MindMap.query.filter(MindMap.map_name == map_name).first()
+    print(str(node_path))
+    if map == None:
+        raise MindMapApiError("MindMap does not exist", map_name)
+    
+    node = map.find_node(str(node_path))
+    print(node.node_name)
+
+    return node.get_json(), 201 
+
 @app.get("/map/<map_name>/print")
 def pretty_print(map_name):
     map = MindMap.query.filter(MindMap.map_name == map_name).first()
-    if map is None:
+    if map == None:
         raise MindMapApiError("MindMap does not exist", map_name)
     
     map.pretty_print()
@@ -46,19 +59,11 @@ def add_mind_map():
         # Using map_name to avoid confusion with database IDs
         map_name = raw_json['id']
         map = MindMap(map_name=map_name)
+        root = map.create_root_node()
         db.session.add(map)
+        db.session.add(root)
         db.session.commit()
         return map_name, 201
-    return {"error": "Request must be JSON"}, 415
-
-@app.post("/get")
-def get_mind_map():
-    if request.is_json:
-        raw_json = request.get_json()
-        request_id = raw_json['id']
-        #maps[request_id] = MindMap(request_id)
-
-        return request_id, 201
     return {"error": "Request must be JSON"}, 415
 
 class MindMapApiError(Exception):

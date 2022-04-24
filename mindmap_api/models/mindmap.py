@@ -8,32 +8,28 @@ class MindMap(db.Model):
     root_node_id = db.Column(db.ForeignKey('node.id'), nullable=True)
     # We are better off eager-loading the root node
     root_node = db.relationship(Node, lazy="joined", innerjoin=False)
+
+    def create_root_node(self):
+        new_node = Node(node_name='')
+        self.root_node = new_node
+        return new_node
     
     def add_node_to_path(self, path, node_name):
         new_node = Node(node_name=node_name)
         db.session.add(new_node)
         db.session.flush()
-        if path == '/':
-            self.root_node = new_node
-        else:
-            if self.root_node is None:
-                raise NodeError('Impossible to insert a anywhere but on `/` when there is no root node.', None)
-            path_list = path.split('/')
 
-            if path[0] != self.root_node.node_name:
-                raise NodeError('The path does not correspond to the root node', self.root_node)
-            
-            path_list.pop(0)
-            
-            if len(path_list) == 0 or path_list[0] == '':
-                new_node.parent_node = self.root_node
-            else:
-                parent_node = self.root_node.return_node_from_path(path_list)
-                new_node.parent_node = parent_node
+        parent_node = self.find_node(path)
+        new_node.parent_node = parent_node
         db.session.commit()    
 
     def pretty_print(self) -> str:
-        if self.root_node is None:
+        if self.root_node == None:
             return ''
         else:
             return self.root_node.pretty_print(0)
+
+    def find_node(self, path) -> Node:
+        path_list = path.split('/')
+        node = self.root_node.return_node_from_path(path_list)
+        return node
