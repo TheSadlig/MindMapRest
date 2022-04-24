@@ -4,6 +4,7 @@
 # Install Requirements
 # -> Flask
 # -> pip install -U Flask-SQLAlchemy
+# -> pip install nose2
 # Launch tests
 # Set env variables
 # Start Server 

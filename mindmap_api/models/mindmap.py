@@ -10,7 +10,7 @@ class MindMap(db.Model):
     root_node = db.relationship(Node, lazy="joined", innerjoin=False)
 
     def create_root_node(self):
-        new_node = Node(node_name='')
+        new_node = Node(node_name='root')
         self.root_node = new_node
         return new_node
     

@@ -33,18 +33,18 @@ class Node(db.Model):
         children = self.get_all_children()
         indentation_str = ' ' * indentation_level * 4
         if len(children) == 0:
-            print(indentation_str + self.node_name)
-        else:
-            print(indentation_str + self.node_name + "/")
+            return indentation_str + self.node_name + '\n'
 
+        res_str = ''
         for child in children:
-            child.pretty_print(indentation_level + 1)
+            res_str += child.pretty_print(indentation_level + 1)
+        return indentation_str + self.node_name + "/\n" + res_str
 
     def get_path(self):
         parent_node = self.parent_node
         # Writing the path from right to left
         path = self.node_name
-        
+
         while parent_node != None and parent_node.parent_node != None:
             path = parent_node.node_name + '/' + path
             parent_node = parent_node.parent_node
