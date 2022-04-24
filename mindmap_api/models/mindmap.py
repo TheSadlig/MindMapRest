@@ -1,5 +1,6 @@
 from models.node import Node, NodeError
 from models.db import db
+import json
 
 class MindMap(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,14 +15,15 @@ class MindMap(db.Model):
         self.root_node = new_node
         return new_node
     
-    def add_node_to_path(self, path, node_name):
+    def add_node_to_path(self, path, node_name) -> Node:
         new_node = Node(node_name=node_name)
         db.session.add(new_node)
         db.session.flush()
 
         parent_node = self.find_node(path)
         new_node.parent_node = parent_node
-        db.session.commit()    
+        db.session.commit()
+        return new_node
 
     def pretty_print(self) -> str:
         if self.root_node == None:
@@ -33,3 +35,9 @@ class MindMap(db.Model):
         path_list = path.split('/')
         node = self.root_node.return_node_from_path(path_list)
         return node
+
+    def get_json(self):
+        data = {}
+        data['id'] = self.map_name
+        
+        return json.dumps(data)

@@ -20,11 +20,11 @@ class MindMapController:
             db.session.commit()
             return map
         except IntegrityError as e:
-            raise MindMapControllerError("Could not create Mind Map", map_name) from e
+            raise MindMapControllerError("Integrity error when creating mindmap", map_name) from e
 
-    def add_node(map_name, node_path, node_name):
+    def add_node(map_name, node_path, node_name) -> Node:
         map = MindMapController.get_map_by_name(map_name)
-        map.add_node_to_path(MindMapController.normalize_path(node_path), node_name)
+        return map.add_node_to_path(MindMapController.normalize_path(node_path), node_name)
     
     def get_node_by_path(map_name, node_path) -> Node:
         map = MindMapController.get_map_by_name(map_name)
@@ -48,6 +48,7 @@ class MindMapControllerError(Exception):
         super().__init__(self.message)
         
     def __str__(self):
+        map_name = self._map_name
         if self._map_name == None:
-            return "Error occurred with mindmap: None"
-        return "Error occurred with mindmap: " + self._map_name
+            map_name = 'None'
+        return "Error occurred with mindmap `" + map_name + "`: "+ self.message

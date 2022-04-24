@@ -3,13 +3,19 @@ from flask import Flask, request, jsonify
 from models.db import db
 from models.mindmap import MindMap
 from models.node import Node
-from controller import MindMapController
+from controller import MindMapController, MindMapControllerError
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
 from flask_sqlalchemy import SQLAlchemy
+import json
+
+HTTP_CODE_SUCCESS = 201
+HTTP_CODE_NOT_FOUND = 404
+HTTP_CODE_CONFLICT = 409
+HTTP_CODE_WRONG_CONTENT = 415
 
 
 app = Flask(__name__)
@@ -23,35 +29,55 @@ def add_node(map_name):
     node_path = raw_json['path']
     node_name = raw_json['text']
 
-    MindMapController.add_node(map_name, node_path, node_name)
-
-    return "OK.", 201 
+    try:
+        node = MindMapController.add_node(map_name, node_path, node_name)
+    except MindMapControllerError as e:
+        return generate_exception('Could find Mind Map', e), HTTP_CODE_NOT_FOUND
+    except NodeError as e:
+        return generate_exception('Node path cannot be found', e), HTTP_CODE_NOT_FOUND
+    
+    return node.get_json(), HTTP_CODE_SUCCESS 
 
 @app.get("/map/<map_name>/node/<path:node_path>")
-def get_node(map_name, node_path):    
-    node = MindMapController.get_node_by_path(map_name, str(node_path)) 
+def get_node(map_name, node_path): 
+    try:
+        node = MindMapController.get_node_by_path(map_name, str(node_path)) 
+    except MindMapControllerError as e:
+        return generate_exception('Could find Mind Map', e), HTTP_CODE_NOT_FOUND
+    except NodeError as e:
+        return generate_exception('Node path cannot be found', e), HTTP_CODE_NOT_FOUND
 
-    return node.get_json(), 201 
+    return node.get_json(), HTTP_CODE_SUCCESS 
 
 @app.get("/map/<map_name>/print")
 def pretty_print(map_name):
-    map = MindMapController.get_map_by_name(map_name)    
-    
-    str = map.pretty_print()
-    print(str)
+    try:
+        map = MindMapController.get_map_by_name(map_name)    
+    except MindMapControllerError as e:
+        return generate_exception('Could find Mind Map', e), HTTP_CODE_NOT_FOUND
 
-    return str, 201 
+    return map.pretty_print(), HTTP_CODE_SUCCESS 
 
 @app.post("/map")
-def add_mind_map():
+def create_mind_map():
     if request.is_json:
         raw_json = request.get_json()
         # Using map_name to avoid confusion with database IDs
         map_name = raw_json['id']
 
-        MindMapController.create_mind_map(map_name)
-        return map_name, 201
-    return {"error": "Request must be JSON"}, 415
+        try:
+            map = MindMapController.create_mind_map(map_name)
+            return map.get_json(), HTTP_CODE_SUCCESS
+        except MindMapControllerError as e:
+            return generate_exception('Could not create Mind Map', e), HTTP_CODE_CONFLICT
+
+
+    return generate_exception('Request must be JSON'), HTTP_CODE_WRONG_CONTENT
+
+def generate_exception(message, ex: None) -> str:
+    if ex == None:
+        return {'error': message}
+    return {'error': message, 'exception': ex.message}
 
 with app.app_context():
     # TODO: add ability to NOT create tables
