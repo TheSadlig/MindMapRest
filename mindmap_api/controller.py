@@ -1,6 +1,6 @@
-from models.db import db
-from models.mindmap import MindMap
-from models.node import Node
+from mindmap_api.models.db import db
+from mindmap_api.models.mindmap import MindMap
+from mindmap_api.models.node import Node
 from sqlalchemy.exc import IntegrityError
 
 class MindMapController:
