@@ -2,10 +2,10 @@ from flask import Flask, request, jsonify
 
 import unittest
 
-from models.db import db
-from models.mindmap import MindMap
-from models.node import Node, NodeError
-from controller import MindMapController, MindMapControllerError
+from mindmap_api.models.db import db
+from mindmap_api.models.mindmap import MindMap
+from mindmap_api.models.node import Node, NodeError
+from mindmap_api.controller import MindMapController, MindMapControllerError
 
 class testMindMapController(unittest.TestCase):
 
