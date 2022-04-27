@@ -1,8 +1,19 @@
-name: deploy to lambda
+name: CICD MindMap
 on: [push]
 jobs:
+  tests:
+    name: Unit tests
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+      - name: Install nose2
+        run: pip install nose2
+      - name: Run unit tests
+        run: nose2 --with-coverage
+
   deploy_source:
-    name: build and deploy lambda
+    name: Build and deploy to AWS lambda
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
