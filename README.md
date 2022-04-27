@@ -134,12 +134,19 @@ root/
 
 ## Bonuses
 :x: Unit tests coverage to 75%.
+
 :heavy_check_mark: If not already done, a nice storage backend (SQL Database, ...).
+
 :arrow_right: SQLite is almost cheating but it is still a SQL database engine. The gap to setup a full database is not that big.
+
 * Docker image.
+
 :heavy_check_mark: Pipeline to build the docker image, execute the unit tests (example, github + travis CI).
+
 :arrow_right: Using Github actions to execute unit tests and deploy to AWS Lambda.
+
 :heavy_check_mark: Deployment in a Cloud service (Heroku, GCP AppEngine...)
+
 :arrow_right: The API is deployed as an AWS Lambda. There is not automated setup into AWS, but the Github workflows is able to deploy any new version merged into the `main` branch
 
 ## Contributing
