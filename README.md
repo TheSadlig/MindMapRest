@@ -70,10 +70,7 @@ Content-Length: 14
 #### Request
 `POST /map/{map}/node`
 ```
-curl -X POST http://localhost:5000/map/toto/node -H 'content-type: application/json' -d '{
->     "path": "/",
->     "text": "i"
-> }'
+curl -X POST http://localhost:5000/map/toto/node -H 'content-type: application/json' -d '{ "path": "/", "text": "i"}'
 ```
 #### Response
 Returns the node that was created
@@ -131,15 +128,22 @@ root/
     B
     i
 ```
+## Calling the version deployed in AWS
+Replace the API key:
+```
+curl -X GET -H "x-api-key: APIKEY"  https://evrt4izpqh.execute-api.ca-central-1.amazonaws.com/default/isalive
+```
 
 ## Bonuses
-:x: Unit tests coverage to 75%.
+:heavy_check_mark: Unit tests coverage to 75%.
 
 :heavy_check_mark: If not already done, a nice storage backend (SQL Database, ...).
 
 :arrow_right: SQLite is almost cheating but it is still a SQL database engine. The gap to setup a full database is not that big.
 
-* Docker image.
+:x: Docker image.
+
+:arrow_right: I decided to use AWS Lambda instead. You can find some (very old) docker example in other projects in this github: [NLPF](https://github.com/TheSadlig/NLPF)
 
 :heavy_check_mark: Pipeline to build the docker image, execute the unit tests (example, github + travis CI).
 
