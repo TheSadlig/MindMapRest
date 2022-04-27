@@ -1,0 +1,1 @@
+[![Build&Deploy](https://github.com/TheSadlig/MindMapRest/actions/workflows/main.yml/badge.svg)](https://github.com/TheSadlig/MindMapRest/actions/workflows/main.yml)

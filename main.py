@@ -1,16 +1,18 @@
 from flask import Flask, request, jsonify
 
-from models.db import db
-from models.mindmap import MindMap
-from models.node import Node
-from controller import MindMapController, MindMapControllerError
+from mindmap_api.models.db import db
+from mindmap_api.models.mindmap import MindMap
+from mindmap_api.models.node import Node
+from mindmap_api.controller import MindMapController, MindMapControllerError
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
 from flask_sqlalchemy import SQLAlchemy
+
 import json
+import os
 
 HTTP_CODE_SUCCESS = 201
 HTTP_CODE_NOT_FOUND = 404
@@ -19,7 +21,7 @@ HTTP_CODE_WRONG_CONTENT = 415
 
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.sqlite"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
@@ -81,4 +83,5 @@ def generate_exception(message, ex: None) -> str:
 
 with app.app_context():
     # TODO: add ability to NOT create tables
+    print(os.getenv('DATABASE_URI'))
     db.create_all()

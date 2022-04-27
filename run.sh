@@ -10,3 +10,5 @@
 # Start Server 
 
 # Add options (tests only, start only etc)
+
+export DATABASE_URI="sqlite:///mindmap.sqlite"

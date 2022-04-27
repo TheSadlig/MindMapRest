@@ -1,4 +1,4 @@
-from models.db import db
+from mindmap_api.models.db import db
 import json
 
 class Node(db.Model):

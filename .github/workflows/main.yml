@@ -1,0 +1,33 @@
+name: CICD MindMap
+on: [push]
+jobs:
+  tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+      - name: Get Dependencies
+        run: pip install -r requirements.txt
+      - name: Run unit tests
+        run: nose2 --with-coverage
+
+  deploy_source:
+    name: Build and deploy to AWS lambda
+    runs-on: ubuntu-latest
+    needs: tests
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+      - name: Build package
+        run: ./package.sh
+      - name: Lambda deploy
+        uses: appleboy/lambda-action@master
+        with:
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_region: ca-central-1
+          function_name: mindMapRest
+          zip_file: mindmaprest-package.zip

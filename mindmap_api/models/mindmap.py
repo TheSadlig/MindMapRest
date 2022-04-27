@@ -1,5 +1,5 @@
-from models.node import Node, NodeError
-from models.db import db
+from mindmap_api.models.node import Node, NodeError
+from mindmap_api.models.db import db
 import json
 
 class MindMap(db.Model):
