@@ -1,5 +1,7 @@
 name: CICD MindMap
 on: [push]
+env: 
+  DATABASE_URI: sqlite:///unittest.sqlite
 jobs:
   tests:
     name: Unit tests
