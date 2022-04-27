@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 
 from mindmap_api.models.db import db
 from mindmap_api.models.mindmap import MindMap
-from mindmap_api.models.node import Node
+from mindmap_api.models.node import Node, NodeError
 from mindmap_api.controller import MindMapController, MindMapControllerError
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
@@ -75,7 +75,7 @@ def create_mind_map():
 
         try:
             map = MindMapController.create_mind_map(map_name)
-            return map.get_json(), HTTP_CODE_OK
+            return map.get_json(), HTTP_CODE_SUCCESS
         except MindMapControllerError as e:
             return generate_exception('Could not create Mind Map', e), HTTP_CODE_CONFLICT
 
@@ -87,6 +87,4 @@ def generate_exception(message, ex: None) -> str:
     return {'error': message, 'exception': ex.message}
 
 with app.app_context():
-    # TODO: add ability to NOT create tables
-    print(os.getenv('DATABASE_URI'))
     db.create_all()
