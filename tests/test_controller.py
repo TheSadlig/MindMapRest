@@ -110,6 +110,14 @@ class testMindMapController(unittest.TestCase):
             n = MindMapController.get_node_by_path(map_name, '/i/like/chicken/a/bit')
             self.assertEqual(n.node_name, 'bit')
 
+    def test_node_insertion_duplicate(self):
+        with self.app.app_context():
+            map_name = 'test'
+            map = MindMapController.create_mind_map(map_name)            
+            MindMapController.add_node(map_name, '/', 'i')
+            MindMapController.add_node(map_name, 'i', 'like')
+            self.assertRaises(NodeError, MindMapController.add_node, map_name, 'i', 'like')
+
 
     def test_map_pretty_print(self):
         with self.app.app_context():

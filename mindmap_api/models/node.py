@@ -21,6 +21,19 @@ class Node(db.Model):
             path_list.pop(0)
             return child_node.return_node_from_path(path_list)
 
+    def add_child(self, node_name):
+        children = self.get_all_children()
+        same_name = filter(lambda n: n.node_name == node_name, children)
+        if any(same_name):
+            raise NodeError("Node already exists as a child", self)
+        new_node = Node(node_name=node_name)
+        db.session.add(new_node)
+        db.session.flush()
+        new_node.parent_node = self
+        db.session.commit()
+        
+        return new_node
+
     def get_child_by_name(self, name):
         node = Node.query.filter(Node.parent_node_id == self.id, Node.node_name == name).first()
         return node

@@ -16,14 +16,7 @@ class MindMap(db.Model):
         return new_node
     
     def add_node_to_path(self, path, node_name) -> Node:
-        new_node = Node(node_name=node_name)
-        db.session.add(new_node)
-        db.session.flush()
-
-        parent_node = self.find_node(path)
-        new_node.parent_node = parent_node
-        db.session.commit()
-        return new_node
+        return self.find_node(path).add_child(node_name)
 
     def pretty_print(self) -> str:
         if self.root_node == None:

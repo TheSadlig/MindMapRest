@@ -19,12 +19,17 @@ HTTP_CODE_SUCCESS = 201
 HTTP_CODE_NOT_FOUND = 404
 HTTP_CODE_CONFLICT = 409
 HTTP_CODE_WRONG_CONTENT = 415
+HTTP_CODE_TEAPOT = 418
 
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
+
+@app.get("/isalive")
+def isalive():
+    return "The teapot is running", HTTP_CODE_TEAPOT
 
 @app.post("/map/<map_name>/node")
 def add_node(map_name):
