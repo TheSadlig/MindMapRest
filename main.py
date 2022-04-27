@@ -14,6 +14,7 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 import os
 
+HTTP_CODE_OK = 200
 HTTP_CODE_SUCCESS = 201
 HTTP_CODE_NOT_FOUND = 404
 HTTP_CODE_CONFLICT = 409
@@ -49,7 +50,7 @@ def get_node(map_name, node_path):
     except NodeError as e:
         return generate_exception('Node path cannot be found', e), HTTP_CODE_NOT_FOUND
 
-    return node.get_json(), HTTP_CODE_SUCCESS 
+    return node.get_json(), HTTP_CODE_OK 
 
 @app.get("/map/<map_name>/print")
 def pretty_print(map_name):
@@ -58,7 +59,7 @@ def pretty_print(map_name):
     except MindMapControllerError as e:
         return generate_exception('Could find Mind Map', e), HTTP_CODE_NOT_FOUND
 
-    return map.pretty_print(), HTTP_CODE_SUCCESS 
+    return map.pretty_print(), HTTP_CODE_OK 
 
 @app.post("/map")
 def create_mind_map():
@@ -69,10 +70,9 @@ def create_mind_map():
 
         try:
             map = MindMapController.create_mind_map(map_name)
-            return map.get_json(), HTTP_CODE_SUCCESS
+            return map.get_json(), HTTP_CODE_OK
         except MindMapControllerError as e:
             return generate_exception('Could not create Mind Map', e), HTTP_CODE_CONFLICT
-
 
     return generate_exception('Request must be JSON'), HTTP_CODE_WRONG_CONTENT
 
